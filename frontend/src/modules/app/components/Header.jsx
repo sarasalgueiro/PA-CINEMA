@@ -1,0 +1,66 @@
+import {useSelector} from 'react-redux';
+import {Link} from 'react-router';
+import {FormattedMessage} from 'react-intl';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Container from "react-bootstrap/Container";
+
+import users from '../../users';
+
+const Header = () => {
+
+    const userName = useSelector(users.selectors.getUserName);
+    const userRole = useSelector(users.selectors.getUserRole);
+
+    return (
+
+        <Navbar bg="light" expand="lg" className="border-bottom">
+            <Container fluid>
+                <Navbar.Brand as={Link} to="/">
+                    <FormattedMessage id="project.app.Header.brand"/>
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="navbarSupportedContent" className="mb-3"/>
+                <Navbar.Collapse id="navbarSupportedContent">
+
+                    {userName ? (
+                        <Nav className="ms-auto">
+                            <NavDropdown title={<><span className="fa-solid fa-user"></span>&nbsp;{userName}</>} align="end" id="user-dropdown">
+                                <NavDropdown.Item as={Link} to="/users/update-profile">
+                                    <FormattedMessage id="project.users.UpdateProfile.title"/>
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/users/change-password">
+                                    <FormattedMessage id="project.users.ChangePassword.title"/>
+                                </NavDropdown.Item>
+                                {userRole === 'SPECTATOR' &&
+                                    <NavDropdown.Item as={Link} to="/shopping/purchase-history" id="purchase-history-link">
+                                        <FormattedMessage id="project.shopping.PurchaseHistory.title"/>
+                                    </NavDropdown.Item>
+                                }
+                                {userRole === 'TICKET_SELLER' &&
+                                    <NavDropdown.Item as={Link} to="/shopping/deliver-tickets" id="deliver-tickets-link">
+                                        <FormattedMessage id="project.shopping.DeliverTickets.title"/>
+                                    </NavDropdown.Item>
+                                }
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item as={Link} to="/users/logout">
+                                    <FormattedMessage id="project.app.Header.logout"/>
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                    ) : (
+                        <Nav className="ms-auto">
+                            <Nav.Link as={Link} to="/users/login" id="loginLink">
+                                <FormattedMessage id="project.users.Login.title"/>
+                            </Nav.Link>
+                        </Nav>
+                    )}
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+
+    );
+
+};
+
+export default Header;

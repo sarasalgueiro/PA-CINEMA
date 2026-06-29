@@ -1,0 +1,66 @@
+SET NAMES utf8mb4;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS Compra;
+DROP TABLE IF EXISTS Session;
+DROP TABLE IF EXISTS Room;
+DROP TABLE IF EXISTS Movie;
+DROP TABLE IF EXISTS User;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE User (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    userName VARCHAR(60) COLLATE utf8mb4_bin NOT NULL,
+    password VARCHAR(60) NOT NULL,
+    firstName VARCHAR(60) NOT NULL,
+    lastName VARCHAR(60) NOT NULL,
+    email VARCHAR(60) NOT NULL,
+    role TINYINT NOT NULL,
+    CONSTRAINT UserPK PRIMARY KEY (id),
+    CONSTRAINT UserNameUniqueKey UNIQUE (userName)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE INDEX UserIndexByUserName ON User (userName);
+
+CREATE TABLE Movie (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    summary VARCHAR(1024),
+    runtime INT NOT NULL,
+    CONSTRAINT MoviePK PRIMARY KEY (id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE Room (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(60) NOT NULL,
+    capacity INT NOT NULL,
+    CONSTRAINT RoomPK PRIMARY KEY (id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE Session (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    movieId BIGINT NOT NULL,
+    roomId BIGINT NOT NULL,
+    date DATETIME NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
+    freeSeats INT NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT SessionPK PRIMARY KEY (id),
+    CONSTRAINT SessionMovieFK FOREIGN KEY (movieId) REFERENCES Movie (id),
+    CONSTRAINT SessionRoomFK FOREIGN KEY (roomId) REFERENCES Room (id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE Compra (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    userId BIGINT NOT NULL,
+    sessionId BIGINT NOT NULL,
+    numTickets INT NOT NULL,
+    bankCard VARCHAR(60) NOT NULL,
+    purchaseDate DATETIME NOT NULL,
+    delivered BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT CompraPK PRIMARY KEY (id),
+    CONSTRAINT CompraUserFK FOREIGN KEY (userId) REFERENCES User (id),
+    CONSTRAINT CompraSessionFK FOREIGN KEY (sessionId) REFERENCES Session (id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
