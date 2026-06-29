@@ -100,6 +100,4 @@ mvn test
 ## 📄 Licencia
 
 Este proyecto está licenciado bajo los términos descritos en el archivo [LICENSE.txt](./LICENSE.txt)
-
-
 ```
